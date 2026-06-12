@@ -8,15 +8,19 @@ section Slink
 
 variable [Monad m] [MonadInfoTree m] [MonadLiftT CoreM m] [MonadEnv m] [MonadError m]
 
-
-structure SrcLink where
+/-- And edit link is a link which opens an editor, specifically vscode,
+    to the specified path. -/
+structure EditLink where
   path : String
 
-instance : FromArgs SrcLink m where
-  fromArgs := SrcLink.mk  <$> positional' `path
+instance : FromArgs EditLink m where
+  fromArgs := EditLink.mk  <$> positional' `path
 
+/-- Define an `editlink` role. It expands to a link which opens an editor, specifically vscode,
+    to the specified path. If the path is relative, it is resolved with respect to the current working directory at the time the verso project is built. If the absolute path does not exist or is not a file, an error is thrown.
+-/
 @[role]
-def srclink : RoleExpanderOf SrcLink
+def editlink : RoleExpanderOf EditLink
   | { path }, args => do
     let fsPath := System.FilePath.mk path
     let cwd ← IO.currentDir
