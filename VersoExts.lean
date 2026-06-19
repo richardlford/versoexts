@@ -27,7 +27,8 @@ def editlink : RoleExpanderOf EditLink
     let absPath := if fsPath.isRelative then System.FilePath.mk (s!"{cwd}" ++ "/" ++ path) else fsPath
     let isFile := (← absPath.pathExists) && ! (← absPath.isDir)
     if ! isFile then
-      throwError s!"{path} interpreted as {absPath} either does not exist or is not a file."
+      -- throwError s!"{path} interpreted as {absPath} either does not exist or is not a file."
+      logWarning s!"{path} interpreted as {absPath} either does not exist or is not a file."
     ``(Inline.link #[$[$(← args.mapM elabInline)],*] $(quote <| "vscode:" ++ s!"{absPath}" ))
 
 /-- A src link is a link which opens an and editor, specifically vscode,
